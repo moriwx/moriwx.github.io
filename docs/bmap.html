@@ -25,7 +25,9 @@
 </body>
 </html>
 <script>
-    var map = new BMapGL.Map('container');
+    var map = new BMapGL.Map('container', {
+        minZoom: 2,
+        maxZoom: 15});
     map.centerAndZoom(new BMapGL.Point(116.404, 39.928), 15);
     map.enableScrollWheelZoom(true);
     // 创建点标记
