@@ -38,13 +38,11 @@
                 var _4x = x.times(4 * fu / 100).round(0, 3).toFixed();
                 var _2x = x.times(2 * fu / 100).round(0, 3).toFixed();
                 var _1x = x.times(fu / 100).round(0, 3).toFixed();
-
                 out += "亲荣和：" + _6x + "00\n";
                 out += "子荣和：" + _4x + "00\n";
                 out += "亲自摸，每人出：" + _2x + "00\n";
                 out += "子自摸，子家出：" + _1x + "00\n";
                 out += "　　　　亲家出：" + _2x + "00\n";
-
             }
             else { //普通
                 if (fan < 5) {
@@ -62,7 +60,6 @@
                 out += "亲自摸，每人出：" + Math.ceil(base * 2 / 100) + "00\n";
                 out += "子自摸，子家出：" + Math.ceil(base / 100) + "00\n";
                 out += "　　　　亲家出：" + Math.ceil(base * 2 / 100) + "00\n";
-
             }
             document.getElementById("display").innerText = out;
         }
