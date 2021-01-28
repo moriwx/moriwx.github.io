@@ -28,7 +28,7 @@
     var map = new BMapGL.Map('container', {
         minZoom: 2,
         maxZoom: 15});
-    map.centerAndZoom(new BMapGL.Point(116.404, 39.928), 12);
+    map.centerAndZoom(new BMapGL.Point(104.438, 36.488), 5);
     map.enableScrollWheelZoom(true);
     // 创建点标记
     var marker1 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.925));
@@ -36,4 +36,10 @@
     // 在地图上添加点标记
     map.addOverlay(marker1);
     map.addOverlay(marker2);
+    // 添加比例尺控件
+    var scaleCtrl = new BMapGL.ScaleControl();
+    map.addControl(scaleCtrl);
+    // 添加缩放控件
+    var zoomCtrl = new BMapGL.ZoomControl();
+    map.addControl(zoomCtrl);
 </script>
