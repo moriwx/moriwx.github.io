@@ -49,13 +49,16 @@
             var beijing = new BMapGL.Marker(new BMapGL.Point(116.404, 39.925));
             // 在地图上添加点标记
             map.addOverlay(beijing);
+            beijing.addEventListener('click', function () { // 开启信息窗口
+                map.openInfoWindow(new BMapGL.InfoWindow('beijing', {width: 200,
+                    height: 100, title: '北京'}), new BMapGL.Point(116.404, 39.925));
+            });
         }
         else if (n === 2) {
-            var marker = new BMapGL.Marker(new BMapGL.Point(113.404, 32.915));
-            map.addOverlay(marker);
+            map.addOverlay(new BMapGL.Marker(new BMapGL.Point(113.404, 32.915)));
         }
-        // else if (n === 3) {
-        //     map.addOverlay(BMapGL.Marker(BMapGL.Point(111.404, 30.915)));
-        // }
+        else if (n === 3) {
+            map.addOverlay(new BMapGL.Marker(new BMapGL.Point(111.404, 30.915)));
+        }
     }
 </script>
