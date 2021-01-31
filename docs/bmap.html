@@ -31,14 +31,16 @@
     function RUN() {
         var n = Number(document.getElementById("num").value);
         if (n === 1) {
+            // delete marker;
             // 创建点标记
-            var marker1 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.925));
+            var marker = new BMapGL.Marker(new BMapGL.Point(116.404, 39.925));
             // 在地图上添加点标记
-            map.addOverlay(marker1);
+            map.addOverlay(marker);
         }
         else {
-            var marker2 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.915));
-            map.addOverlay(marker2);
+            delete marker;
+            var marker = new BMapGL.Marker(new BMapGL.Point(113.404, 32.915));
+            map.addOverlay(marker);
         }
     }
 </script>
