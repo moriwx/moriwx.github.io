@@ -28,6 +28,19 @@
 </html>
 
 <script>
+    var map = new BMapGL.Map('container', {
+        minZoom: 2,
+        maxZoom: 15});
+    map.centerAndZoom(new BMapGL.Point(104.438, 36.488), 5);
+    map.enableScrollWheelZoom(true);
+    // 添加比例尺控件
+    var scaleCtrl = new BMapGL.ScaleControl();
+    map.addControl(scaleCtrl);
+    // 添加缩放控件
+    var zoomCtrl = new BMapGL.ZoomControl();
+    map.addControl(zoomCtrl);
+</script>
+<script>
     function RUN() {
         map.clearOverlays();
         var n = Number(document.getElementById("num").value);
@@ -42,18 +55,4 @@
             map.addOverlay(marker);
         }
     }
-</script>
-
-<script>
-    var map = new BMapGL.Map('container', {
-        minZoom: 2,
-        maxZoom: 15});
-    map.centerAndZoom(new BMapGL.Point(104.438, 36.488), 5);
-    map.enableScrollWheelZoom(true);
-    // 添加比例尺控件
-    var scaleCtrl = new BMapGL.ScaleControl();
-    map.addControl(scaleCtrl);
-    // 添加缩放控件
-    var zoomCtrl = new BMapGL.ZoomControl();
-    map.addControl(zoomCtrl);
 </script>
