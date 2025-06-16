@@ -32,7 +32,7 @@
     <td><label>BPM: <input type="text" id="bpm" style="width: 35%" value="60"></label></td>
     <td><label>拍数: <input type="text" id="bpb" style="width: 35%" value="4"></label></td>
     <td><label>符号: <input type="text" id="symbol" style="width: 35%" value="●"></label></td>
-    <td><label>偏移(ms): <input type="text" id="offsetm" style="width: 32%" value="-20"></label></td>
+    <td><label>偏移(cs): <input type="text" id="offsetc" style="width: 32%" value="-20"></label></td>
   </tr>
   <tr>
     <td></td>
@@ -97,7 +97,7 @@
             const bpm = parseFloat(document.getElementById('bpm').value) || 60;
             const symbol = document.getElementById('symbol').value || '';
             const num = parseInt(document.getElementById('bpb').value) || 4;
-			const offset = Math.floor(parseFloat(document.getElementById('offsetm').value) / 10) || 0;
+			const offset = parseInt(document.getElementById('offsetc').value) || 0;
             
             if (bpm <= 0) {
                 document.getElementById('countdown-results').innerHTML = 'BPM值必须大于0！';
