@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>moriwx的主页</title>
+    <title>mori的工具箱</title>
     <style type="text/css">
         .pic{
             position: absolute;
@@ -14,19 +14,45 @@
 </head>
 
 <body>
+    <h2>LRC倒计时助手</h2>
+    <table style="width: 400px">
+  <tr>
+    <td colspan="4">
+      <label><input type="radio" name="lrc_direc">正向</label>
+      <label><input type="radio" name="lrc_direc" id="_backward" checked="">反向</label>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4"><label>开始时间（厘秒或lrc格式），可输入多个：</label></td>
+  </tr>
+  <tr>
+    <td colspan="4"><input type="text" id="start_time" style="width: 100%"></td>
+  </tr>
+  <tr>
+    <td><label>BPM：<input type="text" id="bpm" style="width: 30%" value="60"></label></td>
+    <td><label>拍数：<input type="text" id="bpb" style="width: 30%" value="4"></label></td>
+    <td><label>符号：<input type="text" id="symbol" style="width: 30%" value="●"></label></td>
+    <td><label>偏移(ms)：<input type="text" id="offsetm" style="width: 25%" value="-20"></label></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td colspan="4"><input type="button" onclick="RUN_LRCCOUNTDOWN();copyResultsLrc()" value="生成并复制">&nbsp;&nbsp;<input type="button" onclick="RUN_LRCCOUNTDOWN()" value="仅生成"></td>
+  </tr>
+</table>
+    <pre id="countdown-results"></pre>
+	<br>
+
     <h2>日本麻将算分器</h2>
     <label><input type="radio" name="type" checked="">普通</label>
     <label><input type="radio" name="type" id="_type">青天井</label><br />
     <label>符：<input type="text" id="fu"></label><br />
     <label>番：<input type="text" id="fan"></label><br />
-    <input type="button" onclick="RUN()" value="计算">
+    <input type="button" onclick="RUN_RIICHI()" value="计算">
     <div id="display"></div>
 
-    <div class="pic">
-        <a href="/bmap">
-            <img src="https://api.ixiaowai.cn/api/api.php" width="1080px" alt=""/>
-        </a>
-    </div>
 
     <script>
         /* big.js v5.1.2 https://github.com/MikeMcl/big.js/LICENCE */
@@ -39,7 +65,111 @@
     </script>
 
     <script>
-        function RUN() {
+        // 倒计时工具函数
+        function lrctime2int(timeStr) {
+            if (typeof timeStr !== 'string') {
+                const num = parseInt(timeStr);
+                return isNaN(num) ? 0 : num;
+            }
+            const parts = timeStr.replace(/\[/g, "").replace(/\]/g, "").split(':');
+            if (parts.length !== 3) return parseInt(timeStr);
+            const minutes = parseInt(parts[0]) || 0;
+            const seconds = parseInt(parts[1]) || 0;
+            const centiseconds = parseInt(parts[2]) || 0;
+            return (minutes * 60 + seconds) * 100 + centiseconds;
+        }
+
+        function csToLrcTime(cs) {
+            cs = Math.max(0, cs);
+            const centiseconds = Math.floor(cs % 100);
+            const totalSeconds = Math.floor(cs / 100);
+            const seconds = totalSeconds % 60;
+            const minutes = Math.floor(totalSeconds / 60);
+            
+            return '[' + [
+                minutes.toString().padStart(2, '0'),
+                seconds.toString().padStart(2, '0'),
+                centiseconds.toString().padStart(2, '0')
+            ].join(':') + ']';
+        }
+
+        function RUN_LRCCOUNTDOWN() {
+            const startTimesInput = document.getElementById('start_time').value.trim();
+            const bpm = parseFloat(document.getElementById('bpm').value) || 60;
+            const symbol = document.getElementById('symbol').value || '';
+            const num = parseInt(document.getElementById('bpb').value) || 4;
+			const offset = Math.floor(parseFloat(document.getElementById('offsetm').value) / 10) || 0;
+            
+            if (bpm <= 0) {
+                document.getElementById('countdown-results').innerHTML = 'BPM值必须大于0！';
+                return;
+            }
+            
+            if (num <= 0) {
+                document.getElementById('countdown-results').innerHTML = '节拍数量必须大于0！';
+                return;
+            }
+            
+            const startTimes = startTimesInput ? startTimesInput.split(/[\s\[\]\(\){}]+/) : [];
+            
+            if (startTimes.length === 0) {
+                document.getElementById('countdown-results').innerHTML = '请输入开始时间！';
+                return;
+            }
+            
+            let resultsHTML = '';
+            const beatInterval = 6000 / bpm;
+            
+            startTimes.forEach((startTime, index) => { if (startTime!=="") {
+                try {
+                    const startCs = typeof startTime === 'string' 
+                        ? lrctime2int(startTime) 
+                        : startTime;
+                    
+                    const timePoints = [];
+                    
+                    for (let i = 0; i <= num; i++) {
+                        let timePoint;
+                        timePoint = Math.max(startCs + offset - i * beatInterval, 0);
+                        if (document.getElementById("_backward").checked) {
+                            timePoints.push(csToLrcTime(timePoint));
+                        } else {
+                            timePoints.unshift(csToLrcTime(timePoint));
+                        }
+                    }
+                    
+                    const result = timePoints.join(symbol);
+                    resultsHTML += `${result}\n`;
+                } catch (e) {
+                    resultsHTML += `错误\n`;
+                }
+            }});
+            
+            document.getElementById('countdown-results').innerHTML = resultsHTML;
+        }
+        
+        function copyResultsLrc() {
+            const results = document.getElementById('countdown-results');
+            if (!results.textContent.trim()) {
+                document.getElementById('countdown-results').innerHTML = '没有可复制的内容';
+                return;
+            }
+			
+            if (results.textContent.slice(-1) === '！') {
+                return;
+            }
+			
+            const textarea = document.createElement('textarea');
+            textarea.value = results.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            document.getElementById('countdown-results').innerHTML += '结果已复制到剪贴板！';
+        }
+        
+        function RUN_RIICHI() {
             var fan = Number(document.getElementById("fan").value);
             var fu = Number(document.getElementById("fu").value);
             var out = "";
