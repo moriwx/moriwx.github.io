@@ -45,7 +45,16 @@
     <pre id="countdown-results"></pre>
 	<br>
 
-    <h2>日本麻将算分器</h2>
+    <h2>取色板</h2>
+	<table style="width: 590px">
+	<tr><td colspan="3"><textarea id="palette-str" style="width: 100%"></textarea></td>
+	<td colspan="2">&ensp;<input type="button" onclick="RUN_PALETTE()" value="解析"></td>
+	<td colspan="1"><input type="button" onclick="RUN_PJSK();RUN_PALETTE()" value="PJSK" style="opacity: 0.1"></td>
+	</tr></table>
+	<div id="display-palette"></div>
+	<br>
+
+    <h2>立直麻将算分器</h2>
     <label><input type="radio" name="type" checked="">普通</label>
     <label><input type="radio" name="type" id="_type">青天井</label><br />
     <label>符：<input type="text" id="fu"></label><br />
@@ -168,6 +177,98 @@
             document.getElementById('countdown-results').innerHTML += '结果已复制到剪贴板！';
         }
         
+		function RUN_PJSK() {
+			document.getElementById('palette-str').value = '&HBBCC33&&H11CCFF&&H11EEFF&&HCCBBFF&&H4444DD&&HCC6633&&HDD5544&&HEEAA33&&H44DDFF&&H6666EE&&H22DDBB&&H44DD88&&HAACCFF&&HFFCC99&&HCCAAFF&&HDDEE99&&H6611EE&&H9966FF&&HDDBB00&&H2277FF&&HDD7700&&H0099FF&&H00BBFF&&HBB66FF&&H99DD33&&HEE88BB&&H994488&&H8866BB&&HCC8888&&H88AACC&&HCCAADD&';
+		}
+		
+		function RUN_PALETTE() {
+			// 获取textarea中的内容
+			const paletteStr = document.getElementById('palette-str').value;
+			
+			// 使用正则表达式匹配所有颜色格式
+			const colorRegex = /(&H[a-fA-F0-9]{6}&)|(#[a-fA-F0-9]{3,6})|(\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\))/g;
+			const colorMatches = paletteStr.match(colorRegex) || [];
+			
+			// 创建表格HTML
+			let tableHTML = `
+			<table>
+				<thead>
+				 	<tr><th>颜色预览</th><th>格式1</th><th>格式2</th></tr>
+				</thead>
+				<tbody>
+			`;
+			
+			// 处理每个匹配到的颜色
+			colorMatches.forEach(colorStr => {
+				let hexColor = '';
+				let bgrColor = '';
+				
+				// 去除空格
+				colorStr = colorStr.trim();
+				
+				// 处理 &HBBGGRR& 格式
+				if (colorStr.startsWith('&H') && colorStr.endsWith('&')) {
+					const hex = colorStr.slice(2, -1);
+					// BGR格式转换为RGB
+					const b = hex.substring(0, 2);
+					const g = hex.substring(2, 4);
+					const r = hex.substring(4, 6);
+					hexColor = `#${r}${g}${b}`.toLowerCase();
+					bgrColor = colorStr.toUpperCase();
+				}
+				// 处理 #RGB 或 #RRGGBB 格式
+				else if (colorStr.startsWith('#')) {
+					let hex = colorStr.slice(1);
+					// 处理缩写格式
+					if (hex.length === 3) {
+						hex = hex.split('').map(c => c + c).join('');
+					}
+					hexColor = `#${hex}`.toLowerCase();
+					
+					// 转换为BGR格式
+					const r = hex.substring(0, 2);
+					const g = hex.substring(2, 4);
+					const b = hex.substring(4, 6);
+					bgrColor = `&H${b}${g}${r}&`.toUpperCase();
+				}
+				// 处理 (R, G, B) 格式
+				else if (colorStr.startsWith('(') && colorStr.endsWith(')')) {
+					const rgbStr = colorStr.slice(1, -1);
+					const [r, g, b] = rgbStr.split(',').map(num => {
+						let n = parseInt(num.trim());
+						// 确保在0-255范围内
+						n = Math.max(0, Math.min(255, n));
+						return n.toString(16).padStart(2, '0').toUpperCase();
+					});
+					
+					hexColor = `#${r}${g}${b}`.toLowerCase();
+					bgrColor = `&H${b}${g}${r}&`;
+				}
+				
+				// 添加到表格行
+				tableHTML += `
+				<tr>
+					<td class="color-cell" style="background-color: ${hexColor};"></td>
+					<td>${hexColor}</td>
+					<td>${bgrColor}</td>
+				</tr>
+				`;
+			});
+			
+			tableHTML += `
+				</tbody>
+			</table>
+			`;
+			
+			// 更新显示区域
+			const displayElement = document.getElementById('display-palette');
+			if (colorMatches.length > 0) {
+				displayElement.innerHTML = tableHTML;
+			} else {
+				displayElement.innerHTML = '<p class="no-results">未识别到有效的颜色格式</p>';
+			}
+		}
+		
         function RUN_RIICHI() {
             var fan = Number(document.getElementById("fan").value);
             var fu = Number(document.getElementById("fu").value);
