@@ -118,7 +118,7 @@
                 return;
             }
             
-            const startTimes = startTimesInput ? startTimesInput.split(/[\s\[\]\(\){}]+/) : [];
+            const startTimes = startTimesInput ? startTimesInput.split(/[\s\[\],;\(\){}]+/) : [];
             
             if (startTimes.length === 0) {
                 document.getElementById('countdown-results').innerHTML = '请输入开始时间！';
@@ -178,7 +178,7 @@
         }
         
 		function RUN_PJSK() {
-			document.getElementById('palette-str').value = '&HBBCC33&&H11CCFF&&H11EEFF&&HCCBBFF&&H4444DD&&HCC6633&&HDD5544&&HEEAA33&&H44DDFF&&H6666EE&&H22DDBB&&H44DD88&&HAACCFF&&HFFCC99&&HCCAAFF&&HDDEE99&&H6611EE&&H9966FF&&HDDBB00&&H2277FF&&HDD7700&&H0099FF&&H00BBFF&&HBB66FF&&H99DD33&&HEE88BB&&H994488&&H8866BB&&HCC8888&&H88AACC&&HCCAADD&';
+			document.getElementById('palette-str').value = '&HBBCC33&&H11CCFF&&H11EEFF&&HCCBBFF&&H4444DD&&HCC6633& &HDD5544&&HEEAA33&&H44DDFF&&H6666EE&&H22DDBB& &H44DD88&&HAACCFF&&HFFCC99&&HCCAAFF&&HDDEE99& &H6611EE&&H9966FF&&HDDBB00&&H2277FF&&HDD7700& &H0099FF&&H00BBFF&&HBB66FF&&H99DD33&&HEE88BB& &H994488&&H8866BB&&HCC8888&&H88AACC&&HCCAADD&';
 		}
 		
 		function RUN_PALETTE() {
